@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Typingus</title>
+  </head>
+  <body>
+    <main>
+      <div class="menu" menu>
+          <div class="menu-item" menu-mode value="0" active>time</div>
+          <div class="menu-item" menu-mode value="1">words</div>
+        <div class="spacer"></div>
+        <div menu-options>
+          <div menu-options-wrapper active>
+            <div class="menu-item" menu-options-item mode="0" value="15">15</div>
+            <div class="menu-item" menu-options-item mode="0" value="30">30</div>
+            <div class="menu-item" menu-options-item mode="0" value="60" active>60</div>
+            <div class="menu-item" menu-options-item mode="0" value="120">120</div>
+          </div>
+          <div menu-options-wrapper>
+            <div class="menu-item" menu-options-item mode="1" value="10">10</div>
+            <div class="menu-item" menu-options-item mode="1" value="25" active>25</div>
+            <div class="menu-item" menu-options-item mode="1" value="50">50</div>
+            <div class="menu-item" menu-options-item mode="1" value="100">100</div>
+          </div>
+        </div>
+      </div>
+      <div class="timer">00:00</div>
+      <div class="result">123</div>
+      <div class="words-wrapper">
+        <div id="caret"></div>
+        <div id="words-container" class="words-container"></div>
+      </div>
+      <button id="restart-btn" type="button">↺</button>
+    </main>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

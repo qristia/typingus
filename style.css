@@ -1,0 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap");
+
+:root {
+  --bg-color: #5c6ca7;
+  --menu-color: #575ec0;
+  --word-color: #aeaeae;
+  --word-color-wrong: #551e1e;
+  --word-color-correct: white;
+  --accent-color: white;
+  --caret-color: white;
+  --menu-font-color: #252525;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "Ubuntu Sans Mono", monospace;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+main {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-color);
+  align-items: center;
+  gap: 20px;
+  padding-top: 6rem;
+}
+
+.menu {
+  display: flex;
+  gap: 0.5rem;
+  color: var(--menu-font-color);
+  background-color: var(--menu-color);
+  border-radius: 6px;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+}
+
+.menu [menu-options-wrapper] {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.menu [menu-options-wrapper]:not([active]),
+.hidden {
+  display: none !important;
+}
+
+.menu-item {
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.menu-item:hover {
+  color: var(--accent-color);
+}
+
+.menu .spacer {
+  width: 3px;
+  height: 100%;
+  margin: 0 8px 0 8px;
+  align-self: center;
+  background-color: var(--bg-color);
+  border-radius: 2px;
+}
+
+.menu-item[active] {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+#restart-btn {
+  font-size: 1.75rem;
+  border: none;
+  background: none;
+  color: var(--accent-color);
+  cursor: pointer;
+  transition: transform 0.3s;
+  justify-self: flex-end;
+}
+
+#restart-btn:hover {
+  transform: rotate(90deg);
+  color: var(--accent-color);
+}
+
+#restart-btn:hover:hover {
+  transform: rotate(-90deg);
+}
+
+.words-wrapper {
+  position: relative;
+  max-width: 75%;
+  width: 75%;
+}
+
+.words-container {
+  gap: 12px;
+  display: flex;
+  height: 7.2rem;
+  font-weight: 500;
+  font-size: 1.5rem;
+  flex-wrap: wrap;
+  overflow: hidden;
+  align-content: flex-start;
+}
+
+.word {
+  user-select: none;
+  color: var(--word-color);
+  transition: all 120ms;
+}
+
+.word span.correct {
+  color: var(--word-color-correct);
+}
+
+.word span.wrong {
+  color: var(--word-color-wrong);
+}
+
+.word span.extra {
+  opacity: 0.6;
+}
+
+.timer {
+  color: var(--menu-font-color);
+  font-weight: 600;
+  font-size: 8rem;
+  user-select: none;
+  padding-top: 1rem;
+}
+
+.result {
+  height: 2rem;
+  color: var(--accent-color);
+  font-size: 2rem;
+}
+
+#caret {
+  position: absolute;
+  background-color: var(--caret-color);
+  width: 2px;
+  height: 30px;
+  transition: all 120ms;
+}
+
+#caret.blink {
+  animation: caret-blink 1.5s steps(2) infinite;
+}
+
+@keyframes caret-blink {
+  0% {
+    opacity: 0;
+  }
+}
