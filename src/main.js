@@ -48,6 +48,18 @@ restartBtn.addEventListener("click", () => {
   setupTypingTest();
 });
 
+let _resizeTimeout = 0;
+window.addEventListener("resize", () => {
+  clearTimeout(_resizeTimeout);
+  _resizeTimeout = setTimeout(_onResizeEnd, 400);
+});
+function _onResizeEnd() {
+  const linesToScroll = getLinesToScroll();
+  for (let i = 0; i < linesToScroll; i++) {
+    deletePreviousLine(() => {});
+  }
+}
+
 setupTypingTest();
 
 function setupTypingTest() {
@@ -140,13 +152,15 @@ function getRandomWord(lang = language) {
   return ENGLISH[rnd];
 }
 
+function addNewWord(word) {
+  wordsArr.push(word);
+  wordsContainer.appendChild(createWordEl(word));
+}
+
 function setupWords(wordsAmount = maxWords) {
   for (let i = 0; i < wordsAmount; i++) {
     const randomWord = getRandomWord();
-    wordsArr.push(randomWord);
-
-    const wordDiv = createWordEl(randomWord);
-    wordsContainer.appendChild(wordDiv);
+    addNewWord(randomWord);
   }
 }
 
@@ -174,7 +188,7 @@ function getWordEl(index = userState.currentWordIndex) {
   return wordsContainer.querySelectorAll("div.word").item(index);
 }
 
-function getScrollOffset() {
+function getWordHeightOffset() {
   const gap = 12;
   const wordHeight = wordsContainer
     .querySelector("div.word")
@@ -209,6 +223,20 @@ function canCreateMoreWords() {
   return wordDim.y > containerDim.y && wordDim.y < nextWordDim.y;
 }
 
+function getLinesToScroll() {
+  const { currentWordIndex } = userState;
+
+  const currentWord = getWordEl(currentWordIndex);
+
+  if (currentWord == null) return 0;
+
+  const wordDim = currentWord.getBoundingClientRect();
+  const offset = wordsContainer.getBoundingClientRect().y;
+  const wordHeightOffset = getWordHeightOffset();
+
+  return (wordDim.y - offset) / wordHeightOffset;
+}
+
 function getAmountToDelete() {
   const words = wordsContainer.querySelectorAll("div.word");
   const positionY = words.item(0).getBoundingClientRect().y;
@@ -218,6 +246,24 @@ function getAmountToDelete() {
     amount++;
   });
   return amount;
+}
+
+function deletePreviousLine(onDelete) {
+  wordsContainer.scroll({ behavior: "smooth", top: getWordHeightOffset() });
+  setTimeout(() => {
+    wordsContainer.scroll({ behavior: "instant", top: 0 });
+
+    wordsElArr = wordsContainer.querySelectorAll("div.word");
+    const amountToDelete = getAmountToDelete();
+    for (let i = 0; i < amountToDelete; i++) {
+      wordsArr.shift();
+      wordsElArr.item(i).remove();
+
+      onDelete();
+    }
+    userState.currentWordIndex -= amountToDelete;
+    updateCaret(getLetterEl(getWordEl()), false);
+  }, 100);
 }
 
 function handleBackspace(ctrlKey) {
@@ -293,25 +339,7 @@ function handleSpacebar() {
   if (!canCreateMoreWords()) {
     updateCaret(getLetterEl(getWordEl()), false);
   } else {
-    wordsContainer.scroll({ behavior: "smooth", top: getScrollOffset() });
-    setTimeout(() => {
-      wordsContainer.scroll({ behavior: "instant", top: 0 });
-
-      wordsElArr = wordsContainer.querySelectorAll("div.word");
-      const amountToDelete = getAmountToDelete();
-      for (let i = 0; i < amountToDelete; i++) {
-        wordsArr.shift();
-        wordsElArr.item(i).remove();
-
-        if (typingMode === 0) {
-          const newWord = getRandomWord();
-          wordsArr.push(newWord);
-          wordsContainer.appendChild(createWordEl(newWord));
-        }
-      }
-      userState.currentWordIndex -= amountToDelete;
-      updateCaret(getLetterEl(getWordEl()), false);
-    }, 100);
+    deletePreviousLine(() => addNewWord(getRandomWord()));
   }
 
   currentWord = wordsArr[userState.currentWordIndex];
