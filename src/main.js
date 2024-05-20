@@ -56,9 +56,27 @@ window.addEventListener("resize", () => {
 function _onResizeEnd() {
   const linesToScroll = getLinesToScroll();
   for (let i = 0; i < linesToScroll; i++) {
-    deletePreviousLine(() => {});
+    deletePreviousLine(linesToScroll);
   }
 }
+
+// this is called after the words container scrolls
+wordsContainer.addEventListener("transitionend", () => {
+  wordsContainer.style.transition = "all 0s";
+  wordsContainer.style.marginTop = "0px";
+
+  wordsElArr = wordsContainer.querySelectorAll("div.word");
+  const amountToDelete = getAmountToDelete();
+  for (let i = 0; i < amountToDelete; i++) {
+    wordsArr.shift();
+    wordsElArr.item(i).remove();
+    if (typingMode === 0) {
+      addNewWord(getRandomWord());
+    }
+  }
+  userState.currentWordIndex -= amountToDelete;
+  updateCaret(getLetterEl(getWordEl()), false);
+});
 
 setupTypingTest();
 
@@ -248,22 +266,9 @@ function getAmountToDelete() {
   return amount;
 }
 
-function deletePreviousLine(onDelete) {
-  wordsContainer.scroll({ behavior: "smooth", top: getWordHeightOffset() });
-  setTimeout(() => {
-    wordsContainer.scroll({ behavior: "instant", top: 0 });
-
-    wordsElArr = wordsContainer.querySelectorAll("div.word");
-    const amountToDelete = getAmountToDelete();
-    for (let i = 0; i < amountToDelete; i++) {
-      wordsArr.shift();
-      wordsElArr.item(i).remove();
-
-      onDelete();
-    }
-    userState.currentWordIndex -= amountToDelete;
-    updateCaret(getLetterEl(getWordEl()), false);
-  }, 100);
+function deletePreviousLine(amount = 1) {
+  wordsContainer.style.transition = "all 250ms ease";
+  wordsContainer.style.marginTop = `-${getWordHeightOffset() * amount}px`;
 }
 
 function handleBackspace(ctrlKey) {
@@ -339,7 +344,7 @@ function handleSpacebar() {
   if (!canCreateMoreWords()) {
     updateCaret(getLetterEl(getWordEl()), false);
   } else {
-    deletePreviousLine(() => addNewWord(getRandomWord()));
+    deletePreviousLine();
   }
 
   currentWord = wordsArr[userState.currentWordIndex];

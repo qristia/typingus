@@ -83,34 +83,33 @@ main {
   background: none;
   color: var(--accent-color);
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease-out;
   justify-self: flex-end;
 }
 
 #restart-btn:hover {
-  transform: rotate(90deg);
-  color: var(--accent-color);
-}
-
-#restart-btn:hover:hover {
   transform: rotate(-90deg);
+  color: var(--accent-color);
 }
 
 .words-wrapper {
   position: relative;
   max-width: 75%;
   width: 75%;
+  height: 112px;
+  overflow: hidden;
 }
 
 .words-container {
   gap: 12px;
   display: flex;
-  height: 7.2rem;
+  height: 152px;
   font-weight: 500;
   font-size: 1.5rem;
   flex-wrap: wrap;
   overflow: hidden;
   align-content: flex-start;
+  transition: all 250ms ease;
 }
 
 .word {
