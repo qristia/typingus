@@ -271,21 +271,41 @@ function deletePreviousLine(amount = 1) {
   wordsContainer.style.marginTop = `-${getWordHeightOffset() * amount}px`;
 }
 
+function goToPreviousWord() {
+  userState.currentWordIndex--;
+  currentWord = wordsArr[userState.currentWordIndex];
+  userState.wordBuffer = typedWords.pop().word;
+  userState.currentLetterIndex = userState.wordBuffer.length;
+}
+
+function deleteWholeWord() {
+  const currentWordEl = getWordEl();
+  userState.wordBuffer = "";
+  userState.currentLetterIndex = 0;
+  updateCaret(getLetterEl(currentWordEl, 0), false);
+  currentWordEl.querySelectorAll("span").forEach((letterEl, i) => {
+    if (i < currentWord.length) {
+      letterEl.classList = "";
+    } else {
+      // remove extra letters
+      letterEl.remove();
+    }
+  });
+}
+
 function handleBackspace(ctrlKey) {
   let currentWordEl = getWordEl();
   let currentLetterEl = getLetterEl(currentWordEl);
 
   const { typedWords, currentWordIndex } = userState;
 
-  if (
+  const canGoBackToPreviousWord =
     userState.currentLetterIndex === 0 &&
     currentWordIndex > 0 &&
-    typedWords[typedWords.length - 1].wrong
-  ) {
-    userState.currentWordIndex--;
-    currentWord = wordsArr[userState.currentWordIndex];
-    userState.wordBuffer = typedWords.pop().word;
-    userState.currentLetterIndex = userState.wordBuffer.length;
+    typedWords[typedWords.length - 1].wrong;
+
+  if (canGoBackToPreviousWord) {
+    goToPreviousWord();
 
     currentWordEl = getWordEl();
     currentLetterEl = getLetterEl(
@@ -297,14 +317,10 @@ function handleBackspace(ctrlKey) {
   }
 
   if (ctrlKey) {
-    userState.wordBuffer = "";
-    userState.currentLetterIndex = 0;
-    updateCaret(getLetterEl(currentWordEl, 0), false);
-    currentWordEl.querySelectorAll("span").forEach((letterEl, i) => {
-      i < currentWord.length ? (letterEl.classList = "") : letterEl.remove();
-    });
+    deleteWholeWord();
     return;
   }
+  // delete letter
   userState.wordBuffer = userState.wordBuffer.slice(0, -1);
   userState.currentLetterIndex = userState.wordBuffer.length;
   currentLetterEl = getLetterEl(currentWordEl);
@@ -313,6 +329,7 @@ function handleBackspace(ctrlKey) {
     currentLetterEl.remove();
   }
   currentLetterEl.classList = "";
+  
   if (userState.currentLetterIndex === 0) {
     updateCaret(
       getLetterEl(currentWordEl, userState.currentLetterIndex),
