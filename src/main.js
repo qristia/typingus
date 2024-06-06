@@ -274,7 +274,7 @@ function deletePreviousLine(amount = 1) {
 function goToPreviousWord() {
   userState.currentWordIndex--;
   currentWord = wordsArr[userState.currentWordIndex];
-  userState.wordBuffer = typedWords.pop().word;
+  userState.wordBuffer = userState.typedWords.pop().word;
   userState.currentLetterIndex = userState.wordBuffer.length;
 }
 
